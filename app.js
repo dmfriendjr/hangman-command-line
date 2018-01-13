@@ -1,8 +1,10 @@
 let inquirer = require('inquirer');
+const randomWord = require('random-word');
 
 class Word {
 	constructor(word) {
 		this.wordArray = [];
+		this.wordComplete = false;
 		for (let i = 0; i < word.length; i++) {
 			this.wordArray.push(new Letter(word[i]));
 		}
@@ -21,12 +23,18 @@ class Word {
 
 	checkGuess(guessedLetter) {
 		let correctGuesses = 0;
+		let lettersRemaining = this.wordArray.length;
 
 		this.wordArray.forEach( (letter) => {
 			correctGuesses += letter.checkGuess(guessedLetter);
+			lettersRemaining -= letter.revealed;
 		});
 
 		this.displayWord();
+
+		if (lettersRemaining <= 0) {
+			this.wordComplete = true;
+		}
 
 		if (correctGuesses > 0) {
 			return true;
@@ -56,11 +64,16 @@ class Letter {
 	}
 }
 
+let activeWord;
+let guessedLetters;
+let guesses;
 
-let newWord = new Word('testing');
-let guessedLetters = [];
-let guesses = 5;
-newWord.displayWord();
+function startRound() {
+	guessedLetters = [];
+	guesses = 5;
+	activeWord = new Word(randomWord());
+	getGuessInput();
+}
 
 function getGuessInput() {
 	inquirer.prompt([
@@ -69,9 +82,16 @@ function getGuessInput() {
 			message: 'Enter guess:',
 			name: 'guess',
 			validate: (input) => {
-				if (guessedLetters.indexOf(input.trim()) !== -1) {
+				let letter = input.trim();
+				if (guessedLetters.indexOf(letter) !== -1) {
 					return 'Already guessed! Enter a different letter';
 				} 
+				if (letter.length === 0) {
+					return 'Please enter a letter';
+				}
+				if (letter.length !== 1) {
+					return 'Please enter only one letter at a time';
+				}
 
 				return true;
 			}
@@ -79,13 +99,28 @@ function getGuessInput() {
 	]).then( (inquirerResponse) => {
 		guessedLetters.push(inquirerResponse.guess.trim());
 
-		if (!newWord.checkGuess(inquirerResponse.guess.trim())) {
+		if (!activeWord.checkGuess(inquirerResponse.guess.trim())) {
 			guesses--;
-			console.log(`Wrong! ${guesses} left`);
+			console.log(`Wrong! ${guesses} guesses left`);
 		}
-
-		getGuessInput();
+		
+		if (activeWord.wordComplete || guesses <= 0) {
+			//All letters have been correctly guessed
+			inquirer.prompt([
+				{
+					type: 'confirm',
+					message: `${guesses > 0 ? 'Congratulations, you won!' : 'Sorry, you lost!'} Play again?`,
+					name: 'replay'
+				}
+			]).then( (replayResponse) => {
+				if (replayResponse.replay) {
+					startRound();
+				}
+			});
+		} else {
+			getGuessInput();
+		}
 	});
 }
 
-getGuessInput();
+startRound();
