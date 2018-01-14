@@ -1,4 +1,4 @@
-let inquirer = require('inquirer');
+const inquirer = require('inquirer');
 const randomWord = require('random-word');
 
 class Word {
