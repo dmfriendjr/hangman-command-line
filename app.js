@@ -8,7 +8,7 @@ class Word {
 		for (let i = 0; i < word.length; i++) {
 			this.wordArray.push(new Letter(word[i]));
 		}
-
+		this.revealWord();
 		this.displayWord();
 	}
 
@@ -41,6 +41,14 @@ class Word {
 		}
 
 		return false;
+	}
+
+	revealWord() {
+		let logString = '';
+		this.wordArray.forEach( (letter) => {
+			logString += letter.character;
+		});
+		console.log(`The word was ${logString}!`);
 	}
 }
 
@@ -105,6 +113,7 @@ function getGuessInput() {
 		}
 		
 		if (activeWord.wordComplete || guesses <= 0) {
+			activeWord.revealWord();
 			//All letters have been correctly guessed
 			inquirer.prompt([
 				{
