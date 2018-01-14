@@ -8,7 +8,7 @@ class Word {
 		for (let i = 0; i < word.length; i++) {
 			this.wordArray.push(new Letter(word[i]));
 		}
-		this.revealWord();
+
 		this.displayWord();
 	}
 
@@ -75,10 +75,12 @@ class Letter {
 let activeWord;
 let guessedLetters;
 let guesses;
+let regexValidator = /^[a-zA-Z]+$/;
 
 function startRound() {
 	guessedLetters = [];
 	guesses = 5;
+	console.log('---New Round---');
 	activeWord = new Word(randomWord());
 	getGuessInput();
 }
@@ -94,8 +96,8 @@ function getGuessInput() {
 				if (guessedLetters.indexOf(letter) !== -1) {
 					return 'Already guessed! Enter a different letter';
 				} 
-				if (letter.length === 0) {
-					return 'Please enter a letter';
+				if (letter.length === 0 || letter.match(regexValidator) === null) {
+					return 'Please only enter letters';
 				}
 				if (letter.length !== 1) {
 					return 'Please enter only one letter at a time';
