@@ -105,16 +105,16 @@ function getGuessInput() {
 			}
 		}
 	]).then( (inquirerResponse) => {
-		guessedLetters.push(inquirerResponse.guess.trim());
+		let guess = inquirerResponse.guess.trim();
+		guessedLetters.push(guess);
 
-		if (!activeWord.checkGuess(inquirerResponse.guess.trim())) {
+		if (!activeWord.checkGuess(guess)) {
 			guesses--;
 			console.log(`Wrong! ${guesses} guesses left`);
 		}
 		
 		if (activeWord.wordComplete || guesses <= 0) {
 			activeWord.revealWord();
-			//All letters have been correctly guessed
 			inquirer.prompt([
 				{
 					type: 'confirm',
