@@ -1,76 +1,7 @@
+const Letter = require('./letter.js');
+const Word = require('./word.js');
 const inquirer = require('inquirer');
 const randomWord = require('random-word');
-
-class Word {
-	constructor(word) {
-		this.wordArray = [];
-		this.wordComplete = false;
-		for (let i = 0; i < word.length; i++) {
-			this.wordArray.push(new Letter(word[i]));
-		}
-
-		this.displayWord();
-	}
-
-	displayWord() {
-		let logString = '';
-		this.wordArray.forEach( (letter) => {
-			logString += letter.displayLetter + ' ';
-		});
-
-		console.log(logString);
-	}
-
-	checkGuess(guessedLetter) {
-		let correctGuesses = 0;
-		let lettersRemaining = this.wordArray.length;
-
-		this.wordArray.forEach( (letter) => {
-			correctGuesses += letter.checkGuess(guessedLetter);
-			lettersRemaining -= letter.revealed;
-		});
-
-		this.displayWord();
-
-		if (lettersRemaining <= 0) {
-			this.wordComplete = true;
-		}
-
-		if (correctGuesses > 0) {
-			return true;
-		}
-
-		return false;
-	}
-
-	revealWord() {
-		let logString = '';
-		this.wordArray.forEach( (letter) => {
-			logString += letter.character;
-		});
-		console.log(`The word was ${logString}!`);
-	}
-}
-
-class Letter {
-	constructor(char) {
-		this.character = char;
-		this.revealed = false;
-		this.displayLetter = '_';
-	}
-
-	checkGuess(guessedLetter) {
-		if (!this.revealed) {
-			if (this.character === guessedLetter) {
-				this.revealed = true;
-				this.displayLetter = this.character;
-				return true;
-			}
-		}
-
-		return false;
-	}
-}
 
 let activeWord;
 let guessedLetters;
