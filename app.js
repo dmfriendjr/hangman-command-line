@@ -1,4 +1,3 @@
-const Letter = require('./letter.js');
 const Word = require('./word.js');
 const inquirer = require('inquirer');
 const randomWord = require('random-word');
